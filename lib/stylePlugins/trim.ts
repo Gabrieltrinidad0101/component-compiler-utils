@@ -1,15 +1,14 @@
-import { Root } from 'postcss'
+import { PluginCreator, Rule, AtRule } from 'postcss'
 
-const trimPlugin = () => ({
+const trim = function ({ raws }: Rule | AtRule) {
+  if (raws.before) raws.before = '\n'
+  if (raws.after) raws.after = '\n'
+}
+
+const trimPlugin: PluginCreator<void> = () => ({
   postcssPlugin: 'trim',
-  Once(root: Root, {}) {
-    root.walk(({ type, raws }) => {
-      if (type === 'rule' || type === 'atrule') {
-        if (raws.before) raws.before = '\n'
-        if (raws.after) raws.after = '\n'
-      }
-    })
-  },
+  AtRule: trim,
+  Rule: trim,
 })
 
 trimPlugin.postcss = true
